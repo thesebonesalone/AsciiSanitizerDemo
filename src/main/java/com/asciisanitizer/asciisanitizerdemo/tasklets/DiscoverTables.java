@@ -38,6 +38,8 @@ public class DiscoverTables implements Tasklet {
             while (rs.next())
             {
                 t.addColumn(rs.getString(1), rs.getString(2));
+
+                //finds primary key, may need to be changed to work with Oracle SQL
                 if (rs.getString(4).equals("PRI"))
                 {
                     t.setPrimaryKey(rs.getString(1));

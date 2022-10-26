@@ -1,6 +1,7 @@
 package com.asciisanitizer.asciisanitizerdemo.tasklets;
 
 import com.asciisanitizer.asciisanitizerdemo.TableRepo;
+import com.asciisanitizer.asciisanitizerdemo.config.TableSelections;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -10,6 +11,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 
 public class FindAllTables implements Tasklet {
 
@@ -26,8 +28,14 @@ public class FindAllTables implements Tasklet {
         Statement stmt = con.createStatement();
         ResultSet rs = stmt.executeQuery("Show tables");
 
+        ArrayList<String> tables = TableSelections.toSanitize();
         while(rs.next()) {
-            tr.addToTables(rs.getString(1), "");
+
+            String tableName = rs.getString(1).toUpperCase();
+            if (tables.contains(tableName))
+            {
+                tr.addToTables(rs.getString(1), "");
+            }
         }
         return RepeatStatus.FINISHED;
     }
